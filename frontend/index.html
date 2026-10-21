@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crave — Online Food Ordering</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070b1f;--glass:rgba(255,255,255,.055);--line:rgba(255,255,255,.12);--tx:#eef2ff;--mut:#9aa4cf;--sf:#ffc857;--ch:#ff6b81;--mn:#2de2c4;--vi:#8b6cff;--ink:#1b1200;--r:22px;
+ --f:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--f);color:var(--tx);min-height:100vh;overflow-x:hidden;line-height:1.5;
+ background:radial-gradient(55% 45% at 88% -5%,rgba(139,108,255,.38),transparent 62%),radial-gradient(45% 40% at -5% 28%,rgba(45,226,196,.15),transparent 62%),radial-gradient(40% 40% at 60% 105%,rgba(255,107,129,.14),transparent 60%),var(--bg) fixed}
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+button,select,input,textarea{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--mn);outline-offset:2px}
+main{position:relative;z-index:2;max-width:1160px;margin:auto;padding:0 20px}
+header{position:sticky;top:12px;z-index:8;width:calc(100% - 32px);max-width:1160px;margin:14px auto 0;display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:22px;flex-wrap:wrap}
+.logo{font-size:27px;font-weight:800;letter-spacing:-1.2px;cursor:pointer;margin-right:auto}.logo i{color:var(--mn);font-style:normal}
+.glass{background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 24px 60px -28px rgba(0,0,0,.8)}
+header.glass{background:rgba(12,16,42,.72)}
+nav{display:flex;gap:2px}
+nav button{background:none;border:0;padding:9px 16px;border-radius:12px;color:var(--mut);font-weight:600;transition:background .2s,color .2s}
+nav button:hover{color:var(--tx)}
+nav button.on{background:rgba(139,108,255,.22);color:#fff;box-shadow:inset 0 0 0 1px rgba(139,108,255,.55)}
+.pill{border-radius:12px;padding:9px 14px;border:1px solid var(--line);background:var(--glass);display:flex;gap:8px;align-items:center;font-weight:600;transition:background .2s}
+.pill:hover{background:rgba(255,255,255,.1)}
+.av{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--vi),var(--mn));font-size:12px;font-weight:800;color:#06102a}
+#cartbtn b{background:var(--ch);border-radius:99px;min-width:22px;height:22px;display:grid;place-items:center;font-size:12px;padding:0 6px}
+.btn{border:0;border-radius:14px;padding:12px 22px;font-weight:700;color:#fff;background:linear-gradient(135deg,#9b82ff,#5b6cff);box-shadow:0 12px 28px -12px #6b5cff,inset 0 1px 0 rgba(255,255,255,.35);transition:transform .15s,box-shadow .15s,filter .15s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.1)}.btn:active{transform:translateY(1px) scale(.98)}
+.btn.cherry{background:linear-gradient(135deg,#ff8aa0,var(--ch));box-shadow:0 12px 28px -12px var(--ch),inset 0 1px 0 rgba(255,255,255,.35)}
+.btn.mint{background:linear-gradient(135deg,#6af2d8,var(--mn));color:#052a24;box-shadow:0 12px 28px -12px var(--mn),inset 0 1px 0 rgba(255,255,255,.5)}
+.btn.ghost{background:var(--glass);color:var(--tx);box-shadow:none;border:1px solid var(--line)}.btn.sm{padding:7px 13px;border-radius:10px;font-size:13px}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.view{display:none;padding:36px 0 120px}.view.on{display:block;animation:in .5s cubic-bezier(.2,.9,.3,1)}
+@keyframes in{from{opacity:0;transform:translateY(14px)}}
+h1{font-size:clamp(42px,7.2vw,82px);line-height:.95;letter-spacing:-3px;font-weight:800}
+h2{font-size:28px;letter-spacing:-.8px;margin:6px 0 16px}
+.mut{color:var(--mut)}
+.hero{padding:40px 0 20px;max-width:600px}.hero p{color:var(--mut);margin:18px 0 26px;font-size:19px;max-width:470px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}.chip{padding:6px 12px;border-radius:99px;font-size:12.5px;font-weight:600;color:var(--mut);border:1px solid var(--line);background:var(--glass)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:34px 0 44px;max-width:640px}
+.stat{padding:16px 18px;border-radius:18px}.stat b{display:block;font-size:30px;letter-spacing:-1px}.stat span{color:var(--mut);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px;perspective:1100px}
+.tilt{position:relative;transform-style:preserve-3d;transition:transform .18s ease-out;border-radius:var(--r);will-change:transform}
+.tilt::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.18),transparent 55%)}
+.tilt:hover::after{opacity:1}
+.rc{padding:22px;cursor:pointer;min-height:236px;display:flex;flex-direction:column;justify-content:space-between}
+.rc .em,.it .em{font-size:68px;line-height:1;transform:translateZ(60px);filter:drop-shadow(0 22px 14px rgba(0,0,0,.55));display:inline-block}
+.rc h3,.it h3{font-size:20px;letter-spacing:-.4px;transform:translateZ(34px)}
+.meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;transform:translateZ(22px)}
+.tag{padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600;background:rgba(255,255,255,.1)}
+.tag.ok{background:rgba(45,226,196,.2);color:var(--mn)}.tag.bad{background:rgba(255,107,129,.2);color:var(--ch)}.tag.sf{background:rgba(255,200,87,.18);color:var(--sf)}
+.it{padding:18px;display:flex;flex-direction:column;gap:6px;min-height:240px}
+.it .d{font-size:13px;color:var(--mut);flex:1;transform:translateZ(16px)}
+.it .row{display:flex;justify-content:space-between;align-items:center;transform:translateZ(40px)}
+.it.off{opacity:.5}.pr{color:var(--sf);font-weight:800;font-size:20px}
+.veg{display:inline-block;width:12px;height:12px;border:2px solid var(--mn);border-radius:3px;position:relative;margin-right:6px;vertical-align:middle}.veg::after{content:"";position:absolute;inset:2px;background:var(--mn);border-radius:50%}
+.veg.nv{border-color:var(--ch)}.veg.nv::after{background:var(--ch)}
+.rhead{display:flex;gap:22px;align-items:center;flex-wrap:wrap;padding:24px;margin-bottom:10px;border-radius:26px}
+.rhead .em{font-size:78px;filter:drop-shadow(0 18px 12px rgba(0,0,0,.55))}
+.cat{margin:28px 0 12px;font-size:19px;letter-spacing:-.3px;color:var(--mn)}
+#scrim{position:fixed;inset:0;z-index:9;background:rgba(4,6,20,.6);opacity:0;pointer-events:none;transition:opacity .3s}#scrim.on{opacity:1;pointer-events:auto}
+#drawer{position:fixed;top:12px;right:12px;bottom:12px;z-index:10;width:min(420px,calc(100vw - 24px));padding:22px;border-radius:28px;overflow-y:auto;background:rgba(14,18,46,.95);transform:perspective(1400px) translateX(115%) rotateY(-24deg);transform-origin:right center;transition:transform .55s cubic-bezier(.2,.9,.25,1)}
+#drawer.on{transform:perspective(1400px) translateX(0) rotateY(0)}
+.ln{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}.ln .n{flex:1;font-size:15px}
+.qty{display:flex;align-items:center;gap:8px}.qty button{width:28px;height:28px;border-radius:9px;border:1px solid var(--line);background:var(--glass)}
+input,textarea,select{width:100%;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:6px;transition:border-color .2s,box-shadow .2s}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--vi);box-shadow:0 0 0 4px rgba(139,108,255,.2)}
+select option{background:#12163a}
+label{display:block;font-size:13px;font-weight:600;color:var(--mut);margin-top:14px}
+.seg{display:flex;gap:6px;margin-top:6px}.seg button{flex:1;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--glass);font-weight:600}.seg button.on{background:rgba(255,107,129,.2);border-color:var(--ch);color:#fff}
+.sum{margin:16px 0 4px;font-size:14px}.sum div{display:flex;justify-content:space-between;padding:3px 0}.sum .t{font-size:20px;font-weight:800;border-top:1px solid var(--line);margin-top:6px;padding-top:10px}
+#modal{position:fixed;inset:0;z-index:20;display:none;place-items:center;background:rgba(4,6,20,.72);padding:16px}#modal.on{display:grid}
+#mbox{width:min(420px,100%);padding:26px;border-radius:28px;background:rgba(16,20,50,.98);animation:pop .45s cubic-bezier(.2,1.2,.3,1)}
+@keyframes pop{from{opacity:0;transform:perspective(900px) rotateX(24deg) scale(.9)}}
+.stars button{background:none;border:0;font-size:30px;color:var(--mut);padding:0 3px}.stars button.on{color:var(--sf);text-shadow:0 0 14px var(--sf)}
+/* login / sign-up page */
+.authwrap{display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:center;min-height:calc(100vh - 190px)}
+.authL h1{font-size:clamp(36px,5vw,58px);letter-spacing:-2.2px}.authL p{color:var(--mut);font-size:17px;margin:16px 0 26px;max-width:430px}
+.perks{display:grid;gap:12px;margin-bottom:30px}.perks div{display:flex;gap:12px;align-items:center;font-weight:600}.perks span{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:rgba(139,108,255,.2);font-size:18px}
+.peek{max-width:430px;padding:18px 20px;border-radius:22px;transform:perspective(900px) rotateY(-14deg) rotateX(6deg);animation:bob 6s ease-in-out infinite}
+@keyframes bob{50%{transform:perspective(900px) rotateY(-10deg) rotateX(3deg) translateY(-8px)}}
+.authR{padding:34px;border-radius:30px;max-width:460px;width:100%;justify-self:center}
+.authR h2{font-size:30px;margin:0 0 4px}
+.pw{position:relative}.pw button{position:absolute;right:8px;top:12px;background:none;border:0;color:var(--mut);padding:6px 8px;font-size:13px;font-weight:600}
+.aerr{min-height:20px;color:var(--ch);font-size:13.5px;font-weight:600;margin-top:12px}
+.or{display:flex;align-items:center;gap:12px;color:var(--mut);font-size:12.5px;margin:18px 0 12px}.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.demos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* orders & tracker */
+.oc{padding:22px;border-radius:var(--r);margin-bottom:18px}
+.trk{display:flex;justify-content:space-between;position:relative;margin:26px 8px 6px}
+.trk::before,.trk i{content:"";position:absolute;top:13px;left:0;height:4px;border-radius:4px}
+.trk::before{right:0;background:var(--line)}.trk i{width:var(--p);background:linear-gradient(90deg,var(--vi),var(--mn));box-shadow:0 0 16px rgba(45,226,196,.6);transition:width 1s cubic-bezier(.2,.9,.3,1)}
+.st{position:relative;text-align:center;font-size:12px;color:var(--mut);width:64px;margin:0 -16px;font-weight:600}
+.st span{display:grid;place-items:center;width:30px;height:30px;margin:0 auto 8px;border-radius:50%;background:#1a1f4a;border:2px solid var(--line);font-size:14px}
+.st.done{color:var(--tx)}.st.done span{background:var(--mn);border-color:var(--mn);color:#052a24}
+.st.cur span{background:var(--vi);border-color:var(--vi);animation:pulse 1.6s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(139,108,255,.8)}100%{box-shadow:0 0 0 16px rgba(139,108,255,0)}}
+/* admin */
+.sub{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}.sub button.on{background:rgba(139,108,255,.25);border-color:var(--vi)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;perspective:1000px;margin-bottom:22px}
+.kpi{padding:22px}.kpi small{color:var(--mut);display:block;transform:translateZ(16px);font-weight:600}.kpi b{font-size:34px;letter-spacing:-1px;transform:translateZ(44px);display:block;margin-top:6px}
+.rep{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}.rep .glass{padding:22px;border-radius:var(--r)}
+.bar{display:grid;grid-template-columns:110px 1fr 76px;gap:8px;align-items:center;font-size:14px;margin-top:10px}
+.bar b{display:block;height:12px;border-radius:9px;background:linear-gradient(90deg,var(--vi),var(--mn));transform-origin:left;animation:g .9s cubic-bezier(.2,.9,.3,1) both;box-shadow:0 4px 14px -4px var(--vi)}
+@keyframes g{from{transform:scaleX(0)}}
+.wrap{overflow-x:auto;border-radius:var(--r)}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:560px}
+th,td{padding:11px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--mut);font-weight:600}
+td select,td input{width:auto;margin:0;padding:6px 8px;border-radius:8px}td input{width:90px}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;padding:18px;border-radius:var(--r);margin-top:18px}
+/* database page */
+.concepts{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-bottom:34px}
+.concept{padding:18px;border-radius:18px}.concept b{display:block;margin-bottom:4px}.concept b::before{content:"✓";color:var(--mn);margin-right:8px}.concept span{color:var(--mut);font-size:13.5px}
+.schema{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px;margin-bottom:34px}
+.tbl{border-radius:18px;overflow:hidden}.tbl h4{padding:12px 16px;display:flex;justify-content:space-between;background:rgba(139,108,255,.16);font-size:15px}.tbl h4 small{color:var(--mut);font-weight:600}
+.col{display:flex;gap:8px;align-items:center;padding:6px 16px;font-size:13px;border-top:1px solid var(--line)}.col span:first-child{flex:1;font-weight:600}.col em{color:var(--mut);font-style:normal;font-size:12px}
+.badge{font-size:10.5px;font-weight:800;padding:1px 7px;border-radius:6px}.badge.pk{background:var(--sf);color:var(--ink)}.badge.fk{background:rgba(45,226,196,.2);color:var(--mn)}
+pre{background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:14px;padding:14px;overflow-x:auto;font-size:12.5px;line-height:1.55;color:#cfd6ff;font-family:ui-monospace,Consolas,monospace;white-space:pre-wrap}
+details{border-radius:14px;padding:12px 16px;margin-bottom:10px}details summary{cursor:pointer;font-weight:700}details pre{margin-top:10px}
+.lab{display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:18px}.lab .glass{padding:18px;border-radius:var(--r)}
+.qbtn{display:block;width:100%;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid transparent;background:none;margin-bottom:4px}.qbtn small{display:block;color:var(--mut);font-size:12px}
+.qbtn.on,.qbtn:hover{background:rgba(139,108,255,.2);border-color:rgba(139,108,255,.5)}
+#toast{position:fixed;left:50%;top:16px;z-index:30;transform:translate(-50%,-130px);background:var(--mn);color:#052a24;padding:12px 22px;border-radius:14px;font-weight:700;transition:transform .45s cubic-bezier(.2,.9,.3,1.3);max-width:92vw}
+#toast.show{transform:translate(-50%,0)}#toast.err{background:var(--ch);color:#fff}
+.empty{padding:40px;text-align:center;color:var(--mut)}
+@media(max-width:820px){.authwrap,.lab{grid-template-columns:1fr}.authL{display:none}}
+@media(max-width:640px){nav{order:3;width:100%;overflow-x:auto}.hero{padding-top:14px}.st{font-size:10px}header{top:8px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<canvas id="bg"></canvas><div id="toast" role="status"></div>
+<header class="glass">
+ <div class="logo" id="logo">crave<i>.</i></div>
+ <nav id="nav"><button data-v="home" class="on">Order</button><button data-v="orders">My orders</button><button data-v="db">Database</button><button data-v="admin" id="adminTab" hidden>Admin</button></nav>
+ <button class="pill" id="who">Log in</button><button class="pill" id="out" hidden>Log out</button>
+ <button class="pill" id="cartbtn" aria-label="Open cart">🛒 Cart <b id="cc">0</b></button>
+</header>
+<main>
+ <section class="view on" id="home">
+  <div class="hero"><h1>Hot food,<br>zero phone calls.</h1><p>Order from four Karachi kitchens and watch every step, from the oven to your door.</p>
+   <div class="cta"><button class="btn" id="startBtn">Browse restaurants</button><button class="btn ghost" id="dbBtn">See the database</button></div>
+   <div class="chips"><span class="chip">FastAPI</span><span class="chip">SQLite</span><span class="chip">Three.js</span><span class="chip">Triggers &amp; views</span></div></div>
+  <div class="stats" id="stats"></div>
+  <h2 id="rtitle">Restaurants near you</h2><div class="grid" id="rests"></div>
+ </section>
+ <section class="view" id="menu"></section>
+ <section class="view" id="orders"></section>
+ <section class="view" id="db"></section>
+ <section class="view" id="admin"></section>
+ <section class="view" id="auth"></section>
+</main>
+<div id="scrim"></div>
+<aside id="drawer" class="glass" aria-label="Your cart"></aside>
+<div id="modal"><div id="mbox" class="glass"></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const $=s=>document.querySelector(s),pk=n=>'Rs '+Math.round(Number(n)).toLocaleString('en-PK');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LS=(()=>{try{return localStorage}catch(e){return{getItem(){},setItem(){},removeItem(){}}}})();
+let S={user:null,token:LS.getItem('crave_token'),rests:[],rest:null,menu:[],cart:{},coupon:null,method:'Cash',view:'home',sub:'dash',poll:null};
+const STEPS=[['Pending','Placed'],['Confirmed','Confirmed'],['Preparing','Cooking'],['Out for Delivery','On the way'],['Delivered','Delivered']];
+const NEXT={'Pending':['Confirmed','Cancelled'],'Confirmed':['Preparing','Cancelled'],'Preparing':['Out for Delivery','Cancelled'],'Out for Delivery':['Delivered','Cancelled'],'Delivered':[],'Cancelled':[]};
+async function api(u,m,b){
+ const r=await fetch('/api'+u,{method:m||'GET',headers:{'Content-Type':'application/json',...(S.token?{Authorization:'Bearer '+S.token}:{})},body:b?JSON.stringify(b):undefined});
+ let j={};try{j=await r.json()}catch(e){}
+ if(r.status===401&&S.token){logout(true)}
+ if(!r.ok)throw new Error(typeof j.detail==='string'?j.detail:'Please check your input and try again');return j}
+function toast(t,e){const x=$('#toast');x.textContent=t;x.className='show'+(e?' err':'');clearTimeout(toast.t);toast.t=setTimeout(()=>x.className='',2800)}
+const guard=f=>async(...a)=>{try{return await f(...a)}catch(e){toast(e.message,1)}};
+
+/* ---------- navigation ---------- */
+function go(v){S.view=v;clearInterval(S.poll);
+ document.querySelectorAll('.view').forEach(e=>e.classList.toggle('on',e.id===v));
+ document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v||(v==='menu'&&b.dataset.v==='home')));
+ scrollTo({top:0});sceneTo(v==='home'?'home':'away');
+ if(v==='orders'){if(!S.user){S.after='orders';return authModal()}drawOrders();S.poll=setInterval(drawOrders,12000)}
+ if(v==='admin'){if(!S.user||S.user.role!=='admin')return go('home');drawAdmin()}
+ if(v==='db')drawDb()}
+$('#nav').onclick=e=>{const b=e.target.closest('button');if(b)go(b.dataset.v)};
+$('#logo').onclick=()=>go('home');$('#startBtn').onclick=()=>$('#rtitle').scrollIntoView();$('#dbBtn').onclick=()=>go('db');
+
+/* ---------- auth ---------- */
+function modal(h){$('#mbox').innerHTML=h;$('#modal').classList.add('on')}function closeModal(){$('#modal').classList.remove('on');$('#mbox').innerHTML=''}
+$('#modal').onclick=e=>{if(e.target.id==='modal')closeModal()};
+async function loadMe(){if(!S.token)return refreshUser();try{S.user=await api('/auth/me')}catch(e){S.user=null}refreshUser()}
+function refreshUser(){const u=S.user;$('#who').innerHTML=u?`<span class="av">${esc(u.name[0])}</span>${esc(u.name.split(' ')[0])}${u.role==='admin'?' · Admin':''}`:'Log in';$('#out').hidden=!u;$('#adminTab').hidden=!(u&&u.role==='admin')}
+function logout(silent){S.token=null;S.user=null;LS.removeItem('crave_token');refreshUser();if(!silent){toast('Logged out');go('home')}}
+$('#who').onclick=()=>S.user?go('orders'):authModal();$('#out').onclick=()=>logout();
+function authModal(mode='in'){go('auth');authView(mode)}
+function authView(mode){const up=mode==='up';
+ $('#auth').innerHTML=`<div class="authwrap">
+  <div class="authL"><h1>Dinner, delivered in real time.</h1><p>One account for ordering, tracking and rating. Staff sign in here too.</p>
+   <div class="perks"><div><span>🛵</span>Live order tracker, from kitchen to door</div><div><span>🏷️</span>Coupons applied before you pay</div><div><span>🔒</span>Passwords stored as salted hashes</div></div>
+   <div class="peek glass"><b>Order #1042 · Burger Barn</b><div class="trk" style="--p:50%;margin:22px 8px 4px"><i></i>
+    ${['Placed','Confirmed','Cooking','On the way','Delivered'].map((s,k)=>`<div class="st ${k<2?'done':k===2?'cur':''}"><span>${k<2?'✓':k+1}</span>${s}</div>`).join('')}</div></div></div>
+  <form class="authR glass" id="af" novalidate><h2>${up?'Create your account':'Welcome back'}</h2><p class="mut">${up?'It takes less than a minute.':'Log in to place and track your orders.'}</p>
+   ${up?`<label for="an">Full name</label><input id="an" autocomplete="name" placeholder="Ayesha Khan">`:''}
+   <label for="ae">Email</label><input id="ae" type="email" autocomplete="email" placeholder="you@example.com">
+   <label for="apw">Password</label><div class="pw"><input id="apw" type="password" autocomplete="${up?'new-password':'current-password'}" placeholder="${up?'At least 6 characters':'Your password'}"><button type="button" id="tgl">Show</button></div>
+   ${up?`<label for="aph">Phone (optional)</label><input id="aph" autocomplete="tel" placeholder="0300-1234567">`:''}
+   <div class="aerr" id="aerr" role="alert"></div>
+   <button class="btn" style="width:100%;padding:14px;margin-top:6px" id="asub" type="submit">${up?'Create account':'Log in'}</button>
+   ${up?'':`<div class="or">or try a demo account</div><div class="demos"><button type="button" class="btn ghost sm" data-demo="c">Customer demo</button><button type="button" class="btn ghost sm" data-demo="a">Admin demo</button></div>`}
+   <p class="mut" style="margin-top:20px;font-size:14px;text-align:center">${up?'Already have an account?':'New to Crave?'} <a href="#" id="aswap" style="color:var(--mn);font-weight:700">${up?'Log in':'Create an account'}</a></p></form></div>`;
+ const f=$('#af'),sub=async(email,pw)=>{const err=$('#aerr');err.textContent='';
+  const b={email:(email??$('#ae').value).trim(),password:pw??$('#apw').value};
+  if(up){b.name=$('#an').value.trim();b.phone=$('#aph').value.trim()||null}
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(b.email))return err.textContent='Enter a valid email address.';
+  if(up&&b.name.length<2)return err.textContent='Enter your full name.';
+  if(b.password.length<(up?6:1))return err.textContent=up?'Your password needs at least 6 characters.':'Enter your password.';
+  const btn=$('#asub');btn.disabled=true;btn.textContent='Please wait…';
+  try{const r=await api(up?'/auth/register':'/auth/login','POST',b);S.token=r.token;LS.setItem('crave_token',r.token);await loadMe();
+   toast('Welcome, '+S.user.name.split(' ')[0]+'!');const to=S.after||'home';S.after=null;go(to==='menu'&&!S.rest?'home':to)}
+  catch(x){err.textContent=x.message;btn.disabled=false;btn.textContent=up?'Create account':'Log in'}};
+ f.onsubmit=e=>{e.preventDefault();sub()};
+ $('#aswap').onclick=e=>{e.preventDefault();authView(up?'in':'up')};
+ $('#tgl').onclick=()=>{const i=$('#apw'),h=i.type==='password';i.type=h?'text':'password';$('#tgl').textContent=h?'Hide':'Show'};
+ document.querySelectorAll('[data-demo]').forEach(b=>b.onclick=()=>{const a=b.dataset.demo==='a';$('#ae').value=a?'admin@crave.test':'ayesha@mail.test';$('#apw').value=a?'admin1234':'demo1234';sub()});
+ setTimeout(()=>$(up?'#an':'#ae')?.focus(),50)}
+
+/* ---------- restaurants & menu ---------- */
+const stars=r=>r?`⭐ ${r}`:'New';
+async function loadRests(){S.rests=await api('/restaurants');
+ $('#rests').innerHTML=S.rests.map(r=>`<article class="rc glass tilt" tabindex="0" data-r="${r.restaurant_id}">
+  <span class="em">${esc(r.emoji)}</span><div><h3>${esc(r.name)}</h3><div class="mut" style="transform:translateZ(18px)">${esc(r.cuisine)} · ${esc(r.address)}</div>
+  <div class="meta"><span class="tag sf">${stars(r.avg_rating)}</span><span class="tag">${r.eta_minutes} min</span><span class="tag">Delivery ${pk(r.delivery_fee)}</span>${r.is_open?'':'<span class="tag bad">Closed</span>'}</div></div></article>`).join('')}
+$('#rests').onclick=e=>{const c=e.target.closest('[data-r]');if(c)openRest(+c.dataset.r)};
+$('#rests').onkeydown=e=>{if(e.key==='Enter'){const c=e.target.closest('[data-r]');if(c)openRest(+c.dataset.r)}};
+const openRest=guard(async id=>{const r=S.rests.find(x=>x.restaurant_id===id);
+ if(S.rest&&S.rest.restaurant_id!==id&&Object.keys(S.cart).length){S.cart={};S.coupon=null;drawCart();toast('Cart cleared: one restaurant per order')}
+ S.rest=r;const [m,rv]=await Promise.all([api(`/restaurants/${id}/menu`),api(`/restaurants/${id}/reviews`)]);S.menu=m;
+ const cats=[...new Set(m.map(i=>i.category))];
+ $('#menu').innerHTML=`<button class="btn ghost sm" id="back">← All restaurants</button>
+  <div class="rhead glass tilt" style="margin-top:14px"><span class="em">${esc(r.emoji)}</span><div><h1 style="font-size:clamp(34px,5vw,54px);letter-spacing:-2px">${esc(r.name)}</h1>
+  <div class="meta"><span class="tag sf">${stars(r.avg_rating)} ${r.review_count?`(${r.review_count})`:''}</span><span class="tag">${esc(r.cuisine)}</span><span class="tag">${r.eta_minutes} min</span><span class="tag">Min order ${pk(r.min_order)}</span><span class="tag">Delivery ${pk(r.delivery_fee)}</span></div></div></div>
+  ${rv.length?`<p class="mut" style="margin:6px 4px">“${esc(rv[0].comment||'Great food')}” — ${esc(rv[0].name)}, ${'★'.repeat(rv[0].rating)}</p>`:''}
+  ${cats.map(c=>`<h3 class="cat">${esc(c)}</h3><div class="grid">${m.filter(i=>i.category===c).map(i=>`
+   <article class="it glass tilt ${i.is_available?'':'off'}"><span class="em" style="font-size:56px">${esc(i.emoji)}</span>
+   <h3><span class="veg ${i.is_veg?'':'nv'}" title="${i.is_veg?'Vegetarian':'Non-vegetarian'}"></span>${esc(i.name)}</h3><div class="d">${esc(i.description)}</div>
+   <div class="row"><span class="pr">${pk(i.price)}</span><button class="btn sm" data-add="${i.item_id}" ${i.is_available&&r.is_open?'':'disabled'}>${i.is_available?'Add':'Sold out'}</button></div></article>`).join('')}</div>`).join('')}`;
+ $('#back').onclick=()=>go('home');go('menu')});
+$('#menu').onclick=e=>{const b=e.target.closest('[data-add]');if(!b)return;const i=S.menu.find(x=>x.item_id===+b.dataset.add);
+ (S.cart[i.item_id]??={n:i.name,p:i.price,q:0,e:i.emoji}).q++;drawCart();
+ b.animate([{transform:'scale(1)'},{transform:'scale(1.25)'},{transform:'scale(1)'}],{duration:260})};
+
+/* ---------- cart & checkout ---------- */
+const subtotal=()=>Object.values(S.cart).reduce((s,v)=>s+v.p*v.q,0);
+function drawCart(){const k=Object.entries(S.cart),n=k.reduce((s,[,v])=>s+v.q,0);$('#cc').textContent=n;
+ const sub=subtotal(),disc=S.coupon?S.coupon.discount:0,fee=S.rest?S.rest.delivery_fee:0;
+ if(!k.length){$('#drawer').innerHTML=`<h2>Your cart</h2><div class="empty"><div style="font-size:54px">🛒</div>Nothing here yet. Add something tasty from a menu.</div>`;return}
+ $('#drawer').innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">${esc(S.rest.emoji)} ${esc(S.rest.name)}</h2><button class="btn ghost sm" id="cx">Close</button></div>
+ ${k.map(([id,v])=>`<div class="ln"><span style="font-size:26px">${esc(v.e)}</span><span class="n">${esc(v.n)}<br><span class="mut" style="font-size:13px">${pk(v.p)}</span></span>
+  <span class="qty"><button data-q="${id}" data-d="-1" aria-label="Remove one">−</button><b>${v.q}</b><button data-q="${id}" data-d="1" aria-label="Add one">+</button></span></div>`).join('')}
+ <label>Delivery address<textarea id="ad" rows="2" placeholder="House, street, area">${esc(S.addr??S.user?.address??'')}</textarea></label>
+ <label>Note for the kitchen (optional)<input id="nt" maxlength="200" value="${esc(S.note||'')}"></label>
+ <label>Coupon</label><div style="display:flex;gap:8px"><input id="cp" placeholder="e.g. WELCOME10" value="${esc(S.coupon?.code||'')}"><button class="btn ghost sm" id="cpb" style="margin-top:6px">Apply</button></div>
+ <label>Payment (simulated)</label><div class="seg">${['Cash','Card','Wallet'].map(m=>`<button data-m="${m}" class="${S.method===m?'on':''}">${m}</button>`).join('')}</div>
+ <div class="sum"><div><span>Subtotal</span><span>${pk(sub)}</span></div>${disc?`<div style="color:var(--mn)"><span>Discount (${esc(S.coupon.code)})</span><span>− ${pk(disc)}</span></div>`:''}
+ <div><span>Delivery</span><span>${pk(fee)}</span></div><div class="t"><span>Total</span><span>${pk(sub-disc+fee)}</span></div></div>
+ <button class="btn cherry" style="width:100%;padding:15px;font-size:16px" id="place">Place order</button>`}
+function openCart(o){$('#drawer').classList.toggle('on',o);$('#scrim').classList.toggle('on',o);if(o)drawCart()}
+$('#cartbtn').onclick=()=>openCart(true);$('#scrim').onclick=()=>openCart(false);
+$('#drawer').onclick=guard(async e=>{const t=e.target;
+ if(t.id==='cx')return openCart(false);
+ if(t.dataset.q){const v=S.cart[t.dataset.q];v.q+=+t.dataset.d;if(v.q<=0)delete S.cart[t.dataset.q];S.coupon=null;return drawCart()}
+ if(t.dataset.m){keep();S.method=t.dataset.m;return drawCart()}
+ if(t.id==='cpb'){keep();const c=$('#cp').value.trim();if(!c){S.coupon=null;return drawCart()}
+  S.coupon=await api(`/coupons/${encodeURIComponent(c)}?subtotal=${subtotal()}`);toast(`Coupon applied: − ${pk(S.coupon.discount)}`);return drawCart()}
+ if(t.id==='place'){keep();if(!S.user){openCart(false);toast('Log in to place your order',1);S.after='menu';return authModal()}
+  const r=await api('/orders','POST',{restaurant_id:S.rest.restaurant_id,method:S.method,address:S.addr,notes:S.note||null,coupon_code:S.coupon?.code||null,
+   items:Object.entries(S.cart).map(([i,v])=>({item_id:+i,quantity:v.q}))});
+  S.cart={};S.coupon=null;S.note='';openCart(false);drawCart();burst();toast(`Order #${r.order_id} placed · ${pk(r.total)}`);setTimeout(()=>go('orders'),900)}});
+function keep(){S.addr=$('#ad')?.value;S.note=$('#nt')?.value}
+$('#drawer').addEventListener('input',e=>{if(e.target.id==='cp')S.coupon=null});
+
+/* ---------- my orders (live tracking) ---------- */
+const drawOrders=guard(async()=>{const o=await api('/orders/mine');
+ $('#orders').innerHTML=`<h2>My orders</h2>`+(o.length?o.map(x=>{const i=STEPS.findIndex(s=>s[0]===x.status);
+  return `<article class="oc glass"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><div><b style="font-size:18px">${esc(x.emoji)} ${esc(x.restaurant)}</b> <span class="mut">#${x.order_id} · ${esc(x.order_date.slice(0,16))}</span></div>
+   <div><span class="tag ${x.status==='Cancelled'?'bad':x.status==='Delivered'?'ok':'sf'}">${esc(x.status)}</span> <span class="tag">${esc(x.method)} · ${esc(x.pay_status)}</span></div></div>
+  ${x.status==='Cancelled'?'':`<div class="trk" style="--p:${i/4*100}%"><i></i>${STEPS.map((s,k)=>`<div class="st ${k<i?'done':k===i?(x.status==='Delivered'?'done':'cur'):''}"><span>${k<i||(k===i&&x.status==='Delivered')?'✓':k+1}</span>${s[1]}</div>`).join('')}</div>`}
+  <p style="margin-top:${x.status==='Cancelled'?10:20}px">${esc(x.items)}</p>
+  <p class="mut" style="font-size:14px;margin-top:6px">${x.rider?`🛵 ${esc(x.rider)} is your rider · `:''}${x.discount?`Saved ${pk(x.discount)} · `:''}Total <b style="color:var(--tx)">${pk(x.total_amount)}</b></p>
+  <div style="display:flex;gap:8px;margin-top:12px">${x.status==='Pending'?`<button class="btn ghost sm" data-c="${x.order_id}">Cancel order</button>`:''}
+  ${x.status==='Delivered'?(x.rating?`<span class="tag sf">You rated ${'★'.repeat(x.rating)}</span>`:`<button class="btn sm" data-rv="${x.order_id}">Rate this order</button>`):''}</div></article>`}).join(''):
+  `<div class="empty glass" style="border-radius:var(--r)"><div style="font-size:54px">🍽️</div>No orders yet. Pick a restaurant and your first order will show up here.</div>`)});
+$('#orders').onclick=guard(async e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.c){await api(`/orders/${b.dataset.c}/cancel`,'POST');toast('Order cancelled');drawOrders()}
+ if(b.dataset.rv){let n=5;modal(`<h2>How was it?</h2><div class="stars" id="stars">${[1,2,3,4,5].map(k=>`<button data-s="${k}" class="on">★</button>`).join('')}</div>
+  <label>Comment (optional)<textarea id="rc" rows="3" maxlength="300"></textarea></label><button class="btn" style="width:100%;margin-top:16px" id="rsub">Submit review</button>`);
+  $('#stars').onclick=e=>{const s=e.target.closest('[data-s]');if(!s)return;n=+s.dataset.s;document.querySelectorAll('#stars button').forEach(x=>x.classList.toggle('on',+x.dataset.s<=n))};
+  $('#rsub').onclick=guard(async()=>{await api(`/orders/${b.dataset.rv}/review`,'POST',{rating:n,comment:$('#rc').value||null});closeModal();toast('Thanks for the review!');drawOrders();loadRests()})}});
+
+/* ---------- admin ---------- */
+const bars=(t,a,v,f)=>{const m=Math.max(...a.map(x=>x[v]),1);return `<div class="glass"><h3>${t}</h3>${a.map(x=>`<div class="bar"><span>${esc(x.name)}</span><b style="width:${x[v]/m*100}%"></b><span>${f?pk(x[v]):x[v]}</span></div>`).join('')}</div>`};
+function countUp(el,to,fmt){const t0=performance.now();(function f(t){const k=Math.min((t-t0)/900,1),e=1-Math.pow(1-k,3);el.textContent=fmt(to*e);if(k<1)requestAnimationFrame(f)})(t0)}
+const drawAdmin=guard(async()=>{
+ $('#admin').innerHTML=`<div class="sub">${[['dash','Dashboard'],['ord','Orders'],['menu','Menu']].map(([k,l])=>`<button class="btn ghost sm ${S.sub===k?'on':''}" data-sub="${k}">${l}</button>`).join('')}</div><div id="apanel"></div>`;
+ ({dash:adminDash,ord:adminOrders,menu:adminMenu})[S.sub]()});
+$('#admin').onclick=e=>{const b=e.target.closest('[data-sub]');if(b){S.sub=b.dataset.sub;drawAdmin()}};
+const adminDash=guard(async()=>{const r=await api('/admin/reports'),k=r.kpi;
+ $('#apanel').innerHTML=`<div class="kpis">${[['Revenue (delivered)',k.revenue,pk],['Total orders',k.orders,x=>Math.round(x)],['Active right now',k.active,x=>Math.round(x)],['Average order',k.avg_order,pk]].map(([l,v,f],i)=>`<div class="kpi glass tilt"><small>${l}</small><b data-k="${i}">0</b></div>`).join('')}</div>
+ <div class="rep">${bars('Delivered sales by restaurant',r.sales,'sales',1)}${bars('Most ordered items',r.popular,'units')}${bars('Orders by status',r.by_status,'n')}${bars('Rider workload',r.riders,'n')}</div>`;
+ [[k.revenue,pk],[k.orders,x=>Math.round(x)],[k.active,x=>Math.round(x)],[k.avg_order,pk]].forEach(([v,f],i)=>countUp(document.querySelector(`[data-k="${i}"]`),v,f))});
+const adminOrders=guard(async()=>{const [o,rd]=await Promise.all([api('/admin/orders'),api('/admin/riders')]);
+ $('#apanel').innerHTML=`<div class="wrap glass"><table><thead><tr><th>#</th><th>Customer</th><th>Restaurant</th><th>Items</th><th>Total</th><th>Status</th><th>Rider</th><th>Payment</th></tr></thead><tbody>${o.map(x=>`<tr>
+ <td>${x.order_id}</td><td>${esc(x.customer)}</td><td>${esc(x.restaurant)}</td><td>${esc(x.items)}</td><td>${pk(x.total_amount)}</td>
+ <td><select data-s="${x.order_id}" ${NEXT[x.status].length?'':'disabled'}><option>${x.status}</option>${NEXT[x.status].map(s=>`<option>${s}</option>`).join('')}</select></td>
+ <td><select data-rd="${x.order_id}" ${x.status==='Delivered'||x.status==='Cancelled'?'disabled':''}><option value="">—</option>${rd.map(r=>`<option value="${r.rider_id}" ${r.rider_id===x.rider_id?'selected':''} ${r.availability_status==='Offline'?'disabled':''}>${esc(r.name)} (${r.availability_status})</option>`).join('')}</select></td>
+ <td><span class="tag ${x.pay_status==='Paid'?'ok':x.pay_status==='Failed'?'bad':''}">${x.pay_status}</span> ${x.method}</td></tr>`).join('')}</tbody></table></div>`});
+$('#admin').onchange=guard(async e=>{const t=e.target;
+ if(t.dataset.s){try{await api(`/admin/orders/${t.dataset.s}/status`,'PATCH',{status:t.value});toast('Status updated')}catch(x){toast(x.message,1)}adminOrders()}
+ if(t.dataset.rd){try{await api(`/admin/orders/${t.dataset.rd}/rider`,'PATCH',{rider_id:t.value?+t.value:null});toast('Rider assigned')}catch(x){toast(x.message,1)}adminOrders()}
+ if(t.id==='mr'){S.mr=+t.value;adminMenu()}
+ if(t.dataset.av){await api(`/admin/menu-items/${t.dataset.av}`,'PATCH',{is_available:t.checked?1:0});toast(t.checked?'Item available':'Marked sold out')}
+ if(t.dataset.pr){await api(`/admin/menu-items/${t.dataset.pr}`,'PATCH',{price:+t.value});toast('Price saved')}});
+const adminMenu=guard(async()=>{const rs=S.rests.length?S.rests:await api('/restaurants');S.mr??=rs[0].restaurant_id;
+ const [m,cats]=await Promise.all([api(`/restaurants/${S.mr}/menu`),api('/categories')]);
+ $('#apanel').innerHTML=`<select id="mr" style="max-width:280px;margin:0 0 16px">${rs.map(r=>`<option value="${r.restaurant_id}" ${r.restaurant_id===S.mr?'selected':''}>${esc(r.name)}</option>`).join('')}</select>
+ <div class="wrap glass"><table style="min-width:520px"><thead><tr><th></th><th>Item</th><th>Category</th><th>Price (Rs)</th><th>Available</th></tr></thead><tbody>${m.map(i=>`<tr><td style="font-size:24px">${esc(i.emoji)}</td><td>${esc(i.name)}</td><td>${esc(i.category)}</td>
+ <td><input type="number" min="0" step="10" value="${i.price}" data-pr="${i.item_id}"></td><td><input type="checkbox" style="width:auto" data-av="${i.item_id}" ${i.is_available?'checked':''}></td></tr>`).join('')}</tbody></table></div>
+ <div class="form glass"><b style="grid-column:1/-1">Add a menu item</b><input id="ni" placeholder="Name"><input id="nd" placeholder="Short description"><input id="ne" placeholder="Emoji" value="🍴"><input id="np" type="number" min="0" placeholder="Price (Rs)">
+ <select id="nc" style="margin:0">${cats.map(c=>`<option value="${c.category_id}">${esc(c.name)}</option>`).join('')}</select><select id="nv" style="margin:0"><option value="0">Non-veg</option><option value="1">Vegetarian</option></select><button class="btn" id="nadd">Add item</button></div>`;
+ $('#nadd').onclick=guard(async()=>{await api('/admin/menu-items','POST',{restaurant_id:S.mr,category_id:+$('#nc').value,name:$('#ni').value.trim(),description:$('#nd').value.trim()||null,emoji:$('#ne').value||'🍴',price:+$('#np').value,is_veg:+$('#nv').value});toast('Item added');adminMenu()})});
+
+/* ---------- database page (for reviewers) ---------- */
+const drawDb=guard(async()=>{const [sc,qs]=await Promise.all([api('/db/schema'),api('/db/queries')]);
+ const fks=sc.tables.reduce((n,x)=>n+x.columns.filter(c=>c.fk).length,0),rows=sc.tables.reduce((n,x)=>n+x.rows,0);
+ const C=[['Normalisation (3NF)',`${sc.tables.length} tables, each fact stored once. unit_price is copied on purpose so old orders keep their price.`],
+  ['Keys and relationships',`A primary key on every table and ${fks} foreign keys, plus a UNIQUE email.`],
+  ['Integrity constraints','CHECK rules on status, price, quantity and rating, plus NOT NULL and DEFAULT values.'],
+  ['Transactions','An order, its items and its payment are saved together or not at all.'],
+  ['Triggers',`${sc.triggers.length} triggers log every status change and free riders automatically.`],
+  ['Views',`${sc.views.length} views for ratings, daily revenue and order summaries.`],
+  ['Indexes',`${sc.indexes.length} indexes on the columns the app filters and joins on.`],
+  ['Joins, subqueries, windows','11 live queries below, from INNER JOIN to RANK().']];
+ const pre=s=>`<pre>${esc(s)}</pre>`;
+ $('#db').innerHTML=`<h2>Database design</h2><p class="mut" style="max-width:640px;margin-bottom:22px">Everything on this page is read live from the running SQLite database (${rows} rows across ${sc.tables.length} tables).</p>
+ <div class="concepts">${C.map(([a,b])=>`<div class="concept glass"><b>${a}</b><span>${b}</span></div>`).join('')}</div>
+ <h2>Tables and relationships</h2><div class="schema">${sc.tables.map(x=>`<div class="tbl glass"><h4>${esc(x.name)}<small>${x.rows} rows</small></h4>
+  ${x.columns.map(c=>`<div class="col"><span>${esc(c.name)}</span>${c.pk?'<span class="badge pk">PK</span>':''}${c.fk?`<span class="badge fk" title="References ${esc(c.fk)}">FK → ${esc(c.fk.split('.')[0])}</span>`:''}<em>${esc(c.type)}</em></div>`).join('')}</div>`).join('')}</div>
+ <h2>Triggers and views</h2>${sc.triggers.concat(sc.views).map(x=>`<details class="glass"><summary>${esc(x.name)}</summary>${pre(x.sql)}</details>`).join('')}
+ <h2 style="margin-top:34px">Query lab</h2><div class="lab"><div class="glass">${qs.map(q=>`<button class="qbtn" data-q="${q.id}">${esc(q.title)}<small>${esc(q.concept)}</small></button>`).join('')}</div>
+ <div class="glass" id="qout"><div class="empty">Pick a query on the left to run it against the live database.</div></div></div>`;
+ const run=guard(async id=>{document.querySelectorAll('.qbtn').forEach(b=>b.classList.toggle('on',+b.dataset.q===id));const q=qs[id],r=await api('/db/queries/'+id);
+  $('#qout').innerHTML=`<b>${esc(q.title)}</b> <span class="tag sf">${esc(q.concept)}</span>${pre(q.sql)}<p class="mut" style="margin:12px 0 6px;font-size:13px">${r.rows.length} row${r.rows.length===1?'':'s'} returned</p>
+   <div class="wrap">${r.rows.length?`<table><thead><tr>${r.columns.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${r.rows.map(row=>`<tr>${row.map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>`:'<div class="empty">No rows. For the integrity check, that is the expected result.</div>'}</div>`});
+ $('.lab').onclick=e=>{const b=e.target.closest('[data-q]');if(b)run(+b.dataset.q)};run(0)});
+async function loadStats(){const s=await api('/stats');$('#stats').innerHTML=[['Restaurants',s.restaurants],['Dishes',s.items],['Orders placed',s.orders],['Customers',s.customers]].map(([l,v])=>`<div class="glass stat"><b>${v}</b><span>${l}</span></div>`).join('')}
+
+/* ---------- 3D scene ---------- */
+let sceneTo=()=>{},burst=()=>{};
+(function(){
+ if(!window.THREE){document.body.insertAdjacentHTML('beforeend','');return}
+ const cv=$('#bg'),sc=new THREE.Scene(),cam=new THREE.PerspectiveCamera(55,1,.1,100),rd=new THREE.WebGLRenderer({canvas:cv,alpha:true,antialias:true});
+ cam.position.z=10;rd.outputEncoding=THREE.sRGBEncoding;
+ sc.add(new THREE.AmbientLight(0xffffff,.55));
+ const key=new THREE.DirectionalLight(0xfff0d6,.9);key.position.set(3,6,8);sc.add(key);
+ const rim1=new THREE.PointLight(0x8b6cff,1.8,40);rim1.position.set(-8,3,3);sc.add(rim1);
+ const rim2=new THREE.PointLight(0x2de2c4,1.4,40);rim2.position.set(8,-4,2);sc.add(rim2);
+ const mat=(c,r=.5,m=0)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m}),mesh=(g,c,r,m)=>new THREE.Mesh(g,mat(c,r,m));
+ /* burger */
+ const burger=new THREE.Group(),inner=new THREE.Group();burger.add(inner);
+ const bot=mesh(new THREE.CylinderGeometry(1.3,1.15,.42,48),0xd98a30,.7);bot.position.y=-.75;
+ const lt=new THREE.TorusGeometry(1.32,.1,10,64),pa=lt.attributes.position;for(let i=0;i<pa.count;i++){const a=Math.atan2(pa.getY(i),pa.getX(i));pa.setZ(i,pa.getZ(i)+Math.sin(a*11)*.09)}lt.computeVertexNormals();
+ const lettuce=mesh(lt,0x46c46a,.6);lettuce.rotation.x=Math.PI/2;lettuce.position.y=-.45;lettuce.scale.set(1,1,1.5);
+ const tom=mesh(new THREE.CylinderGeometry(1.22,1.22,.13,48),0xe5322d,.35);tom.position.y=-.3;
+ const pat=mesh(new THREE.CylinderGeometry(1.3,1.3,.4,48),0x4a2412,.9);pat.position.y=-.02;
+ const ch=mesh(new THREE.BoxGeometry(2.5,.07,2.5),0xffc928,.4);ch.position.y=.25;ch.rotation.y=.78;
+ const top=mesh(new THREE.SphereGeometry(1.35,48,24,0,Math.PI*2,0,Math.PI/2),0xe89a3c,.55);top.position.y=.32;top.scale.y=.9;
+ inner.add(bot,lettuce,tom,pat,ch,top);
+ for(let i=0;i<26;i++){const s=mesh(new THREE.SphereGeometry(.07,8,6),0xfff2cf,.6),th=Math.random()*6.28,ph=.15+Math.random()*1.0;
+  s.scale.set(1,.55,1.7);s.position.set(1.38*Math.sin(ph)*Math.cos(th),.32+1.22*Math.cos(ph),1.38*Math.sin(ph)*Math.sin(th));s.lookAt(0,.32,0);s.rotateY(Math.PI/2);inner.add(s)}
+ inner.rotation.x=.35;
+ const ring=new THREE.Mesh(new THREE.TorusGeometry(2.3,.02,12,160),new THREE.MeshBasicMaterial({color:0x8b6cff,transparent:true,opacity:.7}));ring.rotation.x=1.25;burger.add(ring);
+ /* donut */
+ const donut=new THREE.Group(),dough=mesh(new THREE.TorusGeometry(1.15,.5,32,64),0xd9a05b,.8),ice=mesh(new THREE.TorusGeometry(1.15,.53,32,64,6.283),0xff4d6d,.25);
+ ice.scale.z=.62;ice.position.z=.12;donut.add(dough,ice);
+ for(let i=0;i<34;i++){const a=Math.random()*6.28,r=.7+Math.random()*.9,s=mesh(new THREE.CylinderGeometry(.03,.03,.2,6),[0xffffff,0x46e0a0,0xffb02e,0x6aa8ff][i%4],.4);
+  s.position.set(Math.cos(a)*(1.15+(Math.random()-.5)*.55),Math.sin(a)*(1.15+(Math.random()-.5)*.55),.36);s.rotation.set(Math.random()*3,Math.random()*3,Math.random()*3);donut.add(s)}
+ sc.add(burger,donut);
+ const bits=[];for(let i=0;i<40;i++){const b=mesh(new THREE.IcosahedronGeometry(.07+Math.random()*.14),[0x8b6cff,0x2de2c4,0xff6b81][i%3],.3);
+  b.position.set((Math.random()-.5)*24,(Math.random()-.5)*14,-5+Math.random()*3);b.userData={s:Math.random()+.3,o:Math.random()*6};sc.add(b);bits.push(b)}
+ /* targets per view */
+ const T={},tg={bp:new THREE.Vector3(),bs:1,dp:new THREE.Vector3(),ds:1};
+ sceneTo=v=>{const m=innerWidth<800;
+  if(v==='home'){tg.bp.set(m?1.6:3.8,m?3:.2,m?-2:0);tg.bs=m?.6:1.05;tg.dp.set(m?-2.3:-5.2,m?-3.6:-2.4,-1);tg.ds=m?.45:.8}
+  else{tg.bp.set(m?3.5:7.4,-3.8,-3);tg.bs=.55;tg.dp.set(m?-3.5:-7.4,3.6,-3);tg.ds=.5}};
+ sceneTo('home');burger.position.copy(tg.bp);donut.position.copy(tg.dp);burger.scale.setScalar(tg.bs);donut.scale.setScalar(tg.ds);
+ function rs(){rd.setSize(innerWidth,innerHeight);rd.setPixelRatio(Math.min(devicePixelRatio,2));cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();sceneTo(S.view==='home'?'home':'away')}rs();addEventListener('resize',rs);
+ let mx=0,my=0;addEventListener('pointermove',e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5});
+ let parts=[];burst=()=>{for(let i=0;i<70;i++){const b=mesh(new THREE.IcosahedronGeometry(.1+Math.random()*.08),[0x8b6cff,0x2de2c4,0xff6b81,0xffc857][i%4],.3);
+  b.position.set((Math.random()-.5)*2,-4,4);b.userData.v=new THREE.Vector3((Math.random()-.5)*.3,.18+Math.random()*.22,(Math.random()-.5)*.12);b.userData.l=90;sc.add(b);parts.push(b)}};
+ const red=matchMedia('(prefers-reduced-motion:reduce)').matches;
+ (function loop(t){t*=.001;const k=red?1:.07;
+  burger.position.lerp(tg.bp,k);donut.position.lerp(tg.dp,k);burger.scale.lerp(new THREE.Vector3().setScalar(tg.bs),k);donut.scale.lerp(new THREE.Vector3().setScalar(tg.ds),k);
+  if(!red){burger.rotation.y=t*.7;burger.position.y+=Math.sin(t*1.3)*.006;inner.rotation.z=Math.sin(t*.9)*.08;ring.rotation.z=t*.6;
+   donut.rotation.x=t*.8;donut.rotation.y=t*.55;donut.position.y+=Math.cos(t*1.1)*.006;
+   bits.forEach(b=>{b.rotation.x=t*b.userData.s;b.rotation.y=t*b.userData.s;b.position.y+=Math.sin(t*b.userData.s+b.userData.o)*.004});
+   cam.position.x+=(mx*2.2-cam.position.x)*.04;cam.position.y+=(-my*1.6-cam.position.y)*.04;cam.lookAt(0,0,0);
+   parts=parts.filter(b=>{b.position.add(b.userData.v);b.userData.v.y-=.006;b.rotation.x+=.1;if(--b.userData.l<=0){sc.remove(b);return false}return true})}
+  rd.render(sc,cam);requestAnimationFrame(loop)})(0);
+})();
+
+/* ---------- 3D card tilt with glare (mouse only) ---------- */
+let lastTilt=null;
+document.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;const t=e.target.closest?.('.tilt');
+ if(lastTilt&&lastTilt!==t){lastTilt.style.transform='';lastTilt=null}
+ if(!t)return;lastTilt=t;const r=t.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+ t.style.setProperty('--gx',x*100+'%');t.style.setProperty('--gy',y*100+'%');
+ t.style.transform=`perspective(900px) rotateY(${(x-.5)*16}deg) rotateX(${(.5-y)*16}deg) translateZ(10px)`});
+document.addEventListener('pointerleave',()=>{if(lastTilt){lastTilt.style.transform='';lastTilt=null}});
+addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();openCart(false)}});
+
+(async()=>{try{await loadMe();await loadRests();loadStats();drawCart()}catch(e){toast('Cannot reach the server: '+e.message,1)}})();
+</script></body></html>
